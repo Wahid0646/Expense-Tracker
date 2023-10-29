@@ -1,7 +1,12 @@
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize('exo', 'root', 'Wahid@0646',{
-    dialect: "mysql",
-    host: "localhost",
- });
+require('dotenv').config();
+const sequelize = new Sequelize({
+    host: process.env.DB_HOST,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    dialect: 'mysql', // Use the appropriate dialect
+  });
+  
 
 module.exports = sequelize;

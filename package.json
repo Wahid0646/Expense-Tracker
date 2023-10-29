@@ -15,5 +15,16 @@
     "sequelize": "^6.33.0",
     "sib-api-v3-sdk": "^8.5.0",
     "uuid": "^9.0.1"
-  }
+  },
+  "name": "main-project",
+  "version": "1.0.0",
+  "description": "ExpenseTracker",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "Wahid",
+  "license": "ISC"
 }

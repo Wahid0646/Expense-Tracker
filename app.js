@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
+const https = require('https');
 
 const cors = require("cors");
 app.use(cors());
@@ -18,6 +19,9 @@ const accessLogStream = fs.createWriteStream(
 
 const morgan = require("morgan");
 app.use(morgan("combined", { stream: accessLogStream }));
+
+/*const privatekey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');*/
 
 const sequelize = require("./util/database");
 
@@ -59,6 +63,7 @@ Order.belongsTo(User);
 
 ResetPassword.belongsTo(User);
 User.hasMany(ResetPassword);
+
 
 sequelize
   .sync()
