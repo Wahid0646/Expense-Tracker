@@ -1,10 +1,17 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const app = express();
 
 const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
-const https = require('https');
+const mongoose = require("mongoose");
+//const connectDB = require('./util/dbconn');
+const PORT = process.env.PORT || 3000;
+
+//connectDB();
 
 const cors = require("cors");
 app.use(cors());
@@ -18,10 +25,7 @@ const accessLogStream = fs.createWriteStream(
 const morgan = require("morgan");
 app.use(morgan("combined", { stream: accessLogStream }));
 
-/*const privatekey = fs.readFileSync('server.key');
-const certificate = fs.readFileSync('server.cert');*/
-
-const sequelize = require("./util/database");
+// const sequelize = require("./util/database");
 
 const userRouter = require("./router/userRouter");
 const expenseRouter = require("./router/expenseRouter");
@@ -55,13 +59,11 @@ app.use("/reports", reportsRouter);
 
 
 
-ResetPassword.belongsTo(User);
-User.hasMany(ResetPassword);
-
-
-sequelize
-  .sync()
-  .then((result) => {
-    app.listen(process.env.PORT || 3000);
+mongoose.connect(process.env.MONGODB)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err.message);
+  });

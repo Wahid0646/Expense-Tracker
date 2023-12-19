@@ -6,7 +6,11 @@ const sequelize = new Sequelize({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     dialect: 'mysql', // Use the appropriate dialect
+    dialectOptions: {
+      connectTimeout: 30000, // Set the connection timeout to 30 seconds
+    },
   });
+  
   
 
 module.exports = sequelize;

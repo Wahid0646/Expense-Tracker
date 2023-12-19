@@ -13,6 +13,7 @@ signUp.addEventListener("click", () => {
 signIn.addEventListener("click", () => {
   container.classList.remove("right-panel-active");
 });
+
 const spans = document.querySelectorAll('.ap');
 
 spans.forEach(span => {
@@ -27,7 +28,7 @@ function login() {
   };
 
   axios
-    .post("http://localhost:3000/user/login", loginDetails)
+    .post("http://localhost:3500/user/login", loginDetails)
     .then((result) => {
       alert(result.data.message);
       localStorage.setItem("token", result.data.token);
@@ -43,4 +44,32 @@ function login() {
     });
 }
 
+/*function signup() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const signupDetails = {
+    name: name,
+    email: email,
+    password: password
+  };
+
+  axios
+    .post("http://localhost:3500/user/signup", signupDetails)
+    .then((result) => {
+      alert(result.data.message);
+      window.location.href = "/login";
+    })
+    .catch((error) => {
+      if (error.response) {
+        const errorMessage = error.response.data.message;
+        alert(errorMessage);
+      } else {
+        alert("An error occurred. Please try again later.");
+      }
+    });
+}
+*/
 loginBtn.addEventListener("click", login);
+//signUpBtn.addEventListener("click", signup);

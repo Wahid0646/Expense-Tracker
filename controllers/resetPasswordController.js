@@ -27,7 +27,7 @@ exports.sendMail = async (req, res, next) => {
     const email = req.body.email;
     const requestId = uuidv4();
 
-    const recepientEmail = await User.findOne({ where: { email: email } });
+    const recepientEmail = await User.findOne({ email: email });
 
     if (!recepientEmail) {
       return res
@@ -35,11 +35,13 @@ exports.sendMail = async (req, res, next) => {
         .json({ message: "Please provide the registered email!" });
     }
 
-    const resetRequest = await ResetPassword.create({
+    const resetRequest = new ResetPassword({
       id: requestId,
       isActive: true,
-      userId: recepientEmail.dataValues.id,
+      userId: recepientEmail._id,
     });
+
+    await resetRequest.save();
 
     const client = Sib.ApiClient.instance;
     const apiKey = client.authentications["api-key"];
@@ -47,7 +49,7 @@ exports.sendMail = async (req, res, next) => {
     const transEmailApi = new Sib.TransactionalEmailsApi();
     const sender = {
       email: "wahidshaik0646@gmail.com",
-      name: "Abdul Wahid",
+      name: "Wahid",
     };
     const receivers = [
       {
@@ -60,7 +62,7 @@ exports.sendMail = async (req, res, next) => {
       subject: "Expense Tracker Reset Password",
       textContent: "Link Below",
       htmlContent: `<h3>Hi! We got the request from you for reset the password. Here is the link below >>></h3>
-      <a href="http://localhost:3000/password/resetPasswordPage/{{params.requestId}}"> Click Here</a>`,
+      <a href="http://localhost:3500/password/resetPasswordPage/{{params.requestId}}"> Click Here</a>`,
       params: {
         requestId: requestId,
       },
@@ -91,19 +93,20 @@ exports.updatePassword = async (req, res, next) => {
   try {
     const requestId = req.headers.referer.split("/");
     const password = req.body.password;
-    const checkResetRequest = await ResetPassword.findAll({
-      where: { id: requestId[requestId.length - 1], isActive: true },
+    const checkResetRequest = await ResetPassword.findOne({
+      id: requestId[requestId.length - 1],
+      isActive: true,
     });
-    if (checkResetRequest[0]) {
-      const userId = checkResetRequest[0].dataValues.userId;
-      const result = await ResetPassword.update(
-        { isActive: false },
-        { where: { id: requestId } }
+    if (checkResetRequest) {
+      const userId = checkResetRequest.userId;
+      const result = await ResetPassword.updateOne(
+        { id: requestId },
+        { $set: { isActive: false } }
       );
-      const newPassword = await hashPassword(password);
-      const user = await User.update(
-        { password: newPassword },
-        { where: { id: userId } }
+      const newPassword = await bcrypt.hash(password, 10);
+      const user = await User.updateOne(
+        { _id: userId },
+        { $set: { password: newPassword } }
       );
       return res
         .status(200)
