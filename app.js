@@ -9,8 +9,6 @@ const https = require('https');
 const cors = require("cors");
 app.use(cors());
 
-const dotenv = require("dotenv");
-dotenv.config();
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
@@ -55,11 +53,7 @@ app.use("/password", resetPasswordRouter);
 
 app.use("/reports", reportsRouter);
 
-User.hasMany(Expense);
-Expense.belongsTo(User);
 
-User.hasMany(Order);
-Order.belongsTo(User);
 
 ResetPassword.belongsTo(User);
 User.hasMany(ResetPassword);
