@@ -48,7 +48,7 @@ exports.addExpense = async (req, res, next) => {
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
-    const expenses = await Expense.find({ userId: req.user._id });
+    const expenses = await Expense.find({ userId: req.user.id });
     res.json(expenses);
   } catch (err) {
     console.log(err);
